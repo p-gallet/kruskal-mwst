@@ -1,22 +1,40 @@
 import sys
 
-# Class to represent weighted, non-directed graph
 class Graph:
-
+    """Class to represent weighted, non-directed graph.
+    
+    Attributes:
+        V : int 
+            vertex count
+        graph : list 
+            edges and weights
+    
+    Methods:
+        add(u, v, w, label):
+            Adds an edge to the graph
+        def find(parent, i):
+        def union(parent, rank, x, y):
+        def union(parent, rank, x, y):
+        def kruskal(self):    
+    """
     def __init__(self, vertices):
+        """Initializes Graph with vertex count and empty list."""
         self.V = vertices
         self.graph = []
 
     def add(self, u, v, w, label):
+        """Adds an edge to the graph"""
         self.graph.append([u, v, w, label])
 
     # Recursive implementation of union-find/disjoint-set data structure
     def find(self, parent, i):
+        """Determines which subset a given element belongs to"""
         if parent[i] == i:
             return i
         return self.find(parent, parent[i])
 
     def union(self, parent, rank, x, y):
+        """Joins two subsets into one subset"""
         xset = self.find(parent, x)
         yset = self.find(parent, y)
 
@@ -31,11 +49,9 @@ class Graph:
     # Main function to create MWST from Kruskal's algorithm
     def kruskal(self):
 
-        result = []  # MWST
+        result = [] #MWST
 
-        i = 0  # Edge index
-        e = 0  # MWST edge index
-        total = 0  # Total weight
+        i, e, total = 0, 0, 0  #Edge index, MWST edge index, total weight
 
         # Sort edges by increasing weight
         self.graph = sorted(self.graph, key=lambda item: item[2])
@@ -61,25 +77,20 @@ class Graph:
                 result.append([u, v, w, label])
                 self.union(parent, rank, x, y)
 
-        for u, v, weight, lab in result:
-            total += weight
-            f1.write("{3:>4}: ({0:1}, {1:1}) {2:.1f}\n".format(u, v, weight, lab))
+        with open("output.txt", "w") as outFile:
+            for u, v, weight, lab in result:
+                total += weight
+                outFile.write("{3:>4}: ({0:1}, {1:1}) {2:.1f}\n".format(u, v, weight, lab))
+            outFile.write("Total Weight = %0.2f" % total)
 
-        f1.write("Total Weight = %0.2f" % total)
+def main():
+    with open("points.txt", "r") as file:
+        graph = Graph(int(file.readline()))
+        edgeCount = int(file.readline())
+        for label, edge in enumerate(file, start=1):
+            v1, v2, weight = map(int, edge.split())
+            graph.add(v1, v2, weight, label)
+        graph.kruskal()      
 
-
-f = open(sys.argv[1], "r")
-f1 = open(sys.argv[2], "w")
-
-g = Graph(int(f.readline()))
-f.readline()
-lb = 1
-
-for line in f:
-    a, b, c = map(int, line.split())
-    g.add(a, b, c, lb)
-    lb += 1
-
-g.kruskal()
-f.close()
-f1.close()
+if __name__ == '__main__':
+    main()
